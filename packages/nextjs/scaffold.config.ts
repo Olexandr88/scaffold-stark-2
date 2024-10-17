@@ -6,10 +6,11 @@ export type ScaffoldConfig = {
   onlyLocalBurnerWallet: boolean;
   rpcProviderUrl: string;
   walletAutoConnect: boolean;
+  autoConnectTTL: number;
 };
 
 const scaffoldConfig = {
-  targetNetworks: [chains.devnet],
+  targetNetworks: [chains.sepolia],
   // Only show the Burner Wallet when running on devnet
   onlyLocalBurnerWallet: false,
   rpcProviderUrl: process.env.NEXT_PUBLIC_PROVIDER_URL || "",
@@ -21,6 +22,7 @@ const scaffoldConfig = {
    * 1. If the user was connected into a wallet before, on page reload reconnect automatically
    * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
    */
+  autoConnectTTL: 60000,
   walletAutoConnect: true,
 } as const satisfies ScaffoldConfig;
 

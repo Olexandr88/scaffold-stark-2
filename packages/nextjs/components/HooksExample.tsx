@@ -19,6 +19,8 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWri
 import { InputBase, IntegerInput } from "~~/components/scaffold-stark/";
 import { parseUnits } from "ethers";
 import { Skeleton } from "@radix-ui/themes";
+import { useBlockNumber, useProvider } from "@starknet-react/core";
+import { BlockTag } from "starknet";
 
 const HooksExample: React.FC = () => {
   const [contractName, setContractName] =
@@ -26,6 +28,10 @@ const HooksExample: React.FC = () => {
   const [newGreeting, setNewGreeting] = useState<string>("");
   const [amountEth, setAmountEth] = useState<string>("");
   const [fromBlock, setFromBlock] = useState<bigint>(0n);
+  const {data : blockNumber} = useBlockNumber();
+
+  console.log(blockNumber); 
+
   // Commented code for useSwitchNetwork hook
   //const [selectedNetwork, setSelectedNetwork] = useState<string>("mainnet");
 
@@ -69,7 +75,7 @@ const HooksExample: React.FC = () => {
   const { sendAsync: setGreetingMulti } = useScaffoldMultiWriteContract({
     calls: [
       createContractCall("Eth" as ContractName, "approve", [
-        contract?.address,
+        contract?.address || "0x0",
         weiAmountBigInt,
       ]),
       createContractCall(contractName as ContractName, "set_greeting", [
@@ -98,7 +104,7 @@ const HooksExample: React.FC = () => {
     useScaffoldEventHistory({
       contractName: contractName as ContractName,
       eventName: "contracts::YourContract::YourContract::GreetingChanged",
-      fromBlock,
+      fromBlock: blockNumber ? BigInt(blockNumber) - 20n : 0n,
       watch: true,
     });
 
