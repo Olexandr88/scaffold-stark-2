@@ -25,7 +25,4 @@ const katanaFork = {
   },
 } as const;
 
-export const supportedChains: Record<string, chains.Chain> = {
-  ...chains,
-  katanaFork,
-} as unknown as Record<string, chains.Chain>;
+export const supportedChains = { ...chains, katanaFork };
