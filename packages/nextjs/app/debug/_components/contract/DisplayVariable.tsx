@@ -9,7 +9,7 @@ import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import { useReadContract } from "@starknet-react/core";
 import { BlockNumber } from "starknet";
-import { decodeContractResponse } from "./utilsDisplay";
+import { displayTxResult } from "./utilsDisplay";
 import { useTheme } from "next-themes";
 
 type DisplayVariableProps = {
@@ -85,13 +85,7 @@ export const DisplayVariable = ({
               showAnimation ? "bg-warning rounded-sm animate-pulse-fast" : ""
             }`}
           >
-            {decodeContractResponse({
-              resp: result,
-              abi,
-              functionOutputs: abiFunction?.outputs,
-              asText: true,
-              showAsString: true,
-            })}
+            {displayTxResult(result, false, abiFunction?.outputs)}
           </div>
         </div>
       </div>

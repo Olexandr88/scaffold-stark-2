@@ -6,18 +6,14 @@ import {
   //   TxReceipt,
   getFunctionInputKey,
   getInitialFormState,
-  getArgsAsStringInputFromForm,
+  getParsedContractFunctionArgs,
   transformAbiFunction,
-  FormErrorMessageState,
-  getTopErrorMessage,
-  isError,
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
   useSendTransaction,
   useNetwork,
   useTransactionReceipt,
-  useContract,
 } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
@@ -44,8 +40,7 @@ export const WriteOnlyFunctionForm = ({
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
-  const [formErrorMessage, setFormErrorMessage] =
-    useState<FormErrorMessageState>({});
+  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const { status: walletStatus, isConnected, account, chainId } = useAccount();
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
@@ -59,17 +54,23 @@ export const WriteOnlyFunctionForm = ({
     [chain, targetNetwork.network, walletStatus],
   );
 
-  const { contract: contractInstance } = useContract({
-    abi,
-    address: contractAddress,
-  });
-
   const {
     data: result,
     isPending: isLoading,
     sendAsync,
     error,
-  } = useSendTransaction({});
+  } = useSendTransaction({
+    calls: [
+      {
+        contractAddress,
+        entrypoint: abiFunction.name,
+
+        // use infinity to completely flatten array from n dimensions to 1 dimension
+        // writing in starknet next still needs rawArgs parsing, use v2 parsing
+        calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
+      },
+    ],
+  });
 
   // side effect for error logging
   useEffect(() => {
@@ -82,17 +83,7 @@ export const WriteOnlyFunctionForm = ({
   const handleWrite = async () => {
     if (sendAsync) {
       try {
-        const makeWriteWithParams = () =>
-          sendAsync(
-            !!contractInstance
-              ? [
-                  contractInstance.populate(
-                    abiFunction.name,
-                    getArgsAsStringInputFromForm(form),
-                  ),
-                ]
-              : [],
-          );
+        const makeWriteWithParams = () => sendAsync();
         await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {
@@ -140,7 +131,7 @@ export const WriteOnlyFunctionForm = ({
 
   const errorMsg = (() => {
     if (writeDisabled) return "Wallet not connected or on wrong network";
-    return getTopErrorMessage(formErrorMessage);
+    return formErrorMessage;
   })();
 
   return (
@@ -172,7 +163,7 @@ export const WriteOnlyFunctionForm = ({
           >
             <button
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
-              disabled={writeDisabled || isError(formErrorMessage) || isLoading}
+              disabled={writeDisabled || !!formErrorMessage || isLoading}
               onClick={handleWrite}
             >
               {isLoading && (

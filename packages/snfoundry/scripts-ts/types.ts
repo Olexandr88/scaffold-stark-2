@@ -1,6 +1,9 @@
 import { Account, RawArgs, RpcProvider, UniversalDetails } from "starknet";
 
-export type Networks = Record<"devnet" | "sepolia" | "mainnet", Network>;
+export type Networks = Record<
+  "katana" | "devnet" | "sepolia" | "mainnet",
+  Network
+>;
 
 export type Network = {
   provider: RpcProvider;

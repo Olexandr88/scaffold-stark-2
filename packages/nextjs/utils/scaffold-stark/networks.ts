@@ -1,15 +1,18 @@
-import * as chains from "@starknet-react/chains";
+import { supportedChains as chains } from "../../supportedChains";
 import scaffoldConfig from "~~/scaffold.config";
-
+import { Chain } from "@starknet-react/chains";
 type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
   color: string | [string, string];
   nativeCurrencyTokenAddress?: string;
 };
 
-export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;
+export type ChainWithAttributes = Chain & Partial<ChainAttributes>;
 
 export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
+  [chains.katanaFork.network]: {
+    color: "#b8af0c",
+  },
   [chains.devnet.network]: {
     color: "#b8af0c",
   },
@@ -36,7 +39,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
   }
 
   const targetChain = targetChainArr[0] as keyof typeof chains;
-  // @ts-expect-error : ignoring error since `blockExplorers` key may or may not be present on some chains
+
   const blockExplorerBaseURL = chains[targetChain].explorers?.starkscan[0];
 
   if (!blockExplorerBaseURL) {
@@ -50,10 +53,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
  * Gives the block explorer URL for a given address.
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerAddressLink(
-  network: chains.Chain,
-  address: string,
-) {
+export function getBlockExplorerAddressLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/address/${address}`;
@@ -70,10 +70,7 @@ export function getBlockExplorerAddressLink(
  * Gives the block explorer URL for a given classhash.
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerClasshashLink(
-  network: chains.Chain,
-  address: string,
-) {
+export function getBlockExplorerClasshashLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/class/${address}`;
@@ -86,12 +83,13 @@ export function getBlockExplorerClasshashLink(
   return `${blockExplorerBaseURL}/class/${address}`;
 }
 
-export function getBlockExplorerLink(network: chains.Chain) {
+export function getBlockExplorerLink(network: Chain) {
   switch (network) {
     case chains.mainnet:
       return "https://starkscan.co/";
     default:
     case chains.devnet:
+    case chains.katanaFork:
     case chains.sepolia:
       return "https://sepolia.starkscan.co/";
   }
