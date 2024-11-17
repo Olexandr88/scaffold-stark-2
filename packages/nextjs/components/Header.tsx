@@ -13,6 +13,7 @@ import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
 import { useAccount, useNetwork, useProvider } from "@starknet-react/core";
 import { BlockIdentifier } from "starknet";
+import ControllerButton from "./ControllerButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -49,11 +50,10 @@ export const HeaderMenuLinks = () => {
             <Link
               href={href}
               passHref
-              className={`${
-                isActive
+              className={`${isActive
                   ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
                   : ""
-              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+                } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -170,12 +170,12 @@ export const Header = () => {
             Wallet Not Deployed
           </span>
         ) : null}
+        <ControllerButton />
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme
-          className={`pointer-events-auto ${
-            isLocalNetwork ? "mb-1 lg:mb-0" : ""
-          }`}
+          className={`pointer-events-auto ${isLocalNetwork ? "mb-1 lg:mb-0" : ""
+            }`}
         />
       </div>
     </div>
