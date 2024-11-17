@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useControllerAccount from "../hooks/useControllerAccount";
-import Image from "next/image";  
-import Cartridge from "../public/Cartridge.png"; 
+import Image from "next/image";
+import Cartridge from "../public/Cartridge.png";
 
 const ControllerButton: React.FC = () => {
   const {
@@ -39,13 +39,13 @@ const ControllerButton: React.FC = () => {
           height={32}
           style={{
             marginRight: "15px",
-            marginLeft: "12px", 
+            marginLeft: "12px",
           }}
         />
         <span
           className="flex-grow text-center"
           style={{
-            lineHeight: "50px", 
+            lineHeight: "50px",
             fontWeight: "bold",
           }}
         >
@@ -56,8 +56,7 @@ const ControllerButton: React.FC = () => {
             isMenuOpen ? "rotate-180" : ""
           }`}
           style={{ marginRight: "10px" }}
-        >
-        </span>
+        ></span>
       </button>
 
       {isMenuOpen && isConnected && (
@@ -73,17 +72,23 @@ const ControllerButton: React.FC = () => {
           <div className="flex justify-between items-center mb-2">
             <p className="text-sm">
               <strong>Name:</strong>{" "}
-              <span style={{ fontWeight: "normal" }}>{userName || "No Name"}</span>
+              <span style={{ fontWeight: "normal" }}>
+                {userName || "No Name"}
+              </span>
             </p>
           </div>
 
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-semibold">
-              <strong>Address:</strong> {" "}
-              <span style={{ fontWeight: "normal" }}>{slicedAddress || "No Address"}</span>
+              <strong>Address:</strong>{" "}
+              <span style={{ fontWeight: "normal" }}>
+                {slicedAddress || "No Address"}
+              </span>
             </p>
             <button
-              onClick={() => navigator.clipboard.writeText(userAccountController || "")}
+              onClick={() =>
+                navigator.clipboard.writeText(userAccountController || "")
+              }
               className="ml-2 text-white hover:text-gray-400 transition duration-300"
               title="Copiar Dirección"
             >
