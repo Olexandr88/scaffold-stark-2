@@ -1,6 +1,7 @@
+import { Chain } from "@starknet-react/chains";
 import { supportedChains as chains } from "../../supportedChains";
 import scaffoldConfig from "~~/scaffold.config";
-import { Chain } from "@starknet-react/chains";
+
 type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
   color: string | [string, string];
@@ -31,7 +32,11 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
 
   const targetChainArr = chainNames.filter((chainName) => {
     const wagmiChain = chains[chainName as keyof typeof chains];
-    return wagmiChain.network === network;
+    return (
+      typeof wagmiChain === "object" &&
+      "network" in wagmiChain &&
+      wagmiChain.network === network
+    );
   });
 
   if (targetChainArr.length === 0) {
@@ -39,7 +44,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
   }
 
   const targetChain = targetChainArr[0] as keyof typeof chains;
-
+  // @ts-expect-error : ignoring error since `blockExplorers` key may or may not be present on some chains
   const blockExplorerBaseURL = chains[targetChain].explorers?.starkscan[0];
 
   if (!blockExplorerBaseURL) {
